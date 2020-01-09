@@ -1,9 +1,25 @@
 var canvas = document.getElementById("renderCanvas"); // Get the canvas element 
 var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
+// Moves line vertices to start and end
+// line is a babylon mesh with 2 vertices
+// start and end are babylon Vector3 objects
+function updateLine(line, start, end) {
+    var positions = line.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+    
+    positions[0] = start.x;
+    positions[1] = start.y;
+    positions[2] = start.z;
+
+    positions[3] = end.x;
+    positions[4] = end.y;
+    positions[5] = end.z;
+    
+    line.setVerticesData(BABYLON.VertexBuffer.PositionKind, positions);
+}
+
 /******* Add the create scene function ******/
 var createScene = function () {
-
     // Create the scene space
     var scene = new BABYLON.Scene(engine);
 
@@ -29,38 +45,22 @@ var createScene = function () {
     var defaultPoints =[new BABYLON.Vector3.Zero(), new BABYLON.Vector3.Zero()];
     var line = BABYLON.MeshBuilder.CreateLines("line", {points: defaultPoints}, scene);
 
+    scene.registerBeforeRender(function () {
+        // Keep debug vector updated
+        var bird = scene.getMeshesByID("bird")[0];
+        var line = scene.getMeshesByID("line")[0];
+        updateLine(line, bird.position, (bird.position.add(new BABYLON.Vector3(0, 0, 6))));
+    });
+
     return scene;
 };
 /******* End of the create scene function ******/
-
-// Moves line vertices to start and end
-// line is a babylon mesh with 2 vertices
-// start and end are babylon Vector3 objects
-function updateLine(line, start, end) {
-    var positions = line.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-    
-    positions[0] = start.x;
-    positions[1] = start.y;
-    positions[2] = start.z;
-
-    positions[3] = end.x;
-    positions[4] = end.y;
-    positions[5] = end.z;
-    
-    line.setVerticesData(BABYLON.VertexBuffer.PositionKind, positions);
-}
 
 // Call the createScene function
 var scene = createScene();
 
 // Register a render loop to repeatedly render the scene
 engine.runRenderLoop(function () {
-        // Keep debug vector updated
-        var bird = scene.getMeshesByID("bird")[0];
-        var line = scene.getMeshesByID("line")[0];
-        updateLine(line, bird.position, (bird.position.add(new BABYLON.Vector3(0, 0, 6))));
-
-        // SHOW THE BIRB
         scene.render();
 });
 
