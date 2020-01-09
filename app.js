@@ -28,6 +28,16 @@ var createScene = function () {
     var bird = BABYLON.MeshBuilder.CreateBox("bird", {height: 0.5, width: 4, depth: 2}, scene);
     var rock1 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 3}, scene);
 
+    var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
+    groundMaterial.diffuseColor = new BABYLON.Color3(0.1, 0.1, 0.1);
+    groundMaterial.specularColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+    groundMaterial.ambientColor = new BABYLON.Color3(0.23, 0.98, 0.53);
+    ground.material = groundMaterial;
+
+    var birdMaterial = new BABYLON.StandardMaterial("birdMaterial", scene);
+    birdMaterial.diffuseColor = new BABYLON.Color3.White();
+    bird.material = birdMaterial;
+
     // Add camera and link it to bird's location
     bird.position = new BABYLON.Vector3(0, 10, 0);
     var camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 2, Math.PI / 2, 10, bird.position, scene);
@@ -44,6 +54,9 @@ var createScene = function () {
     // Show a debug vector
     var defaultPoints =[new BABYLON.Vector3.Zero(), new BABYLON.Vector3.Zero()];
     var line = BABYLON.MeshBuilder.CreateLines("line", {points: defaultPoints}, scene);
+
+    // line.material = groundMaterial;
+    line.color = BABYLON.Color3.Blue();
 
     scene.registerBeforeRender(function () {
         // Keep debug vector updated
